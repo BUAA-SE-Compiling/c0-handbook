@@ -211,10 +211,10 @@ C0的源代码只在ASCII范围内接受如下任意字符：
 <hexadecimal-digit> ::=
     <digit>|'a'|'b'|'c'|'d'|'e'|'f'|'A'|'B'|'C'|'D'|'E'|'F'
 <integer-literal> ::= 
-    <decimal-literal>|<hexadecimal-digit>
+    <decimal-literal>|<hexadecimal-literal>
 <decimal-literal> ::= 
     '0'|<nonzero-digit>{<digit>}
-<hexadecimal-digit> ::= 
+<hexadecimal-literal> ::= 
     ('0x'|'0X')<hexadecimal-digit>{<hexadecimal-digit>}
 ```
 
@@ -1239,10 +1239,10 @@ mini 实验中采用的是语法分析制导翻译，因为遍历语法树执行
     <digit>|'a'|'b'|'c'|'d'|'e'|'f'|'A'|'B'|'C'|'D'|'E'|'F'
 
 <integer-literal> ::= 
-    <decimal-literal>|<hexadecimal-digit>
+    <decimal-literal>|<hexadecimal-literal>
 <decimal-literal> ::= 
     '0'|<nonzero-digit>{<digit>}
-<hexadecimal-digit> ::= 
+<hexadecimal-literal> ::= 
     ('0x'|'0X')<hexadecimal-digit>{<hexadecimal-digit>}
 
 
