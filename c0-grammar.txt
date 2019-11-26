@@ -1,5 +1,5 @@
 <digit> ::= 
-    '0'|<nonzero-literal>
+    '0'|<nonzero-digit>
 <nonzero-digit> ::= 
     '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
 <hexadecimal-digit> ::=
