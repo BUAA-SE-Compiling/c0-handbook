@@ -717,7 +717,7 @@ do {
 <multiplicative-expression> ::= 
      <cast-expression>{<multiplicative-operator><cast-expression>}
 <cast-expression> ::=
-    {'('<type-specifier>')'}<unary-operator>
+    {'('<type-specifier>')'}<unary-expression>
 <unary-expression> ::=
     [<unary-operator>]<primary-expression>
 <primary-expression> ::=  
@@ -759,7 +759,11 @@ do {
 <type-specifier>         ::= <simple-type-specifier>
 <simple-type-specifier>  ::= 'void'|'int'|'double'
 <const-qualifier>        ::= 'const'
-    
+
+<multiplicative-expression> ::= 
+     <cast-expression>{<multiplicative-operator><cast-expression>}
+<cast-expression> ::=
+    {'('<type-specifier>')'}<unary-expression>
 <unary-expression> ::=
     [<unary-operator>]<primary-expression>
 <primary-expression> ::=  
@@ -1395,7 +1399,7 @@ mini 实验中采用的是语法分析制导翻译，因为遍历语法树执行
 <multiplicative-expression> ::= 
      <cast-expression>{<multiplicative-operator><cast-expression>}
 <cast-expression> ::=
-    {'('<type-specifier>')'}<unary-operator>
+    {'('<type-specifier>')'}<unary-expression>
 <unary-expression> ::=
     [<unary-operator>]<primary-expression>
 <primary-expression> ::=  
