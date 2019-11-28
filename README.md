@@ -304,6 +304,15 @@ C0的源代码只在ASCII范围内接受如下任意字符：
 
 - 赋值语句左侧的标识符不能是不可修改的类型
 - 作为`<primary-expression>`参与计算的内容必须是可读的非`void`类型
+- `<condition>`的最终值类型是`int`
+- `<condition> ::= <expression>`时，如果`<expression>`可以转换为`int`类型，且转换得到的值为`0`，那么视为`false`；否则均视为`true`。
+- `<condition> ::= <expression><relational-operator><expression>`时，如果两侧的`<expression>`是可比的且满足对应运算符的语义，那么视为`true`；否则均视为`false`。
+  - 可比的是指两侧的类型可以通过较小的类型提升至较大的类型，且这个较大的类型的值可以互相比较。`int`、`char`、`double`都是可比的。
+  - 运算符语义：`<`左小于右、`<=`左不大于右、`>`左大于右、`>=`左不小于右、`==`左等于右、`!=`左不等于右
+
+> UB:  关系表达式`<condition>`在这里只说明了什么样的情况应该视为true或false，但是从未说明其本身的值应该是多少（即没有说必须是0和1）
+>
+> （因为它不出现在赋值语句右侧以及函数传参，因此这里不进行强制约束了）
 
 ##### 3.2.2.6 程序结构
 
@@ -451,6 +460,12 @@ if(i<0) // if1
 	    i = 1;
 ```
 
+`if`语句的流程是：
+
+- 求值`<condition>`
+  - 如果`<condition>`是`true`，控制进入`if`的代码块
+  - 如果`<condition>`是`false`，控制进入`else`的代码块
+
 ##### 3.2.2.10 循环语句
 
 C0支持最简单的while循环语句：
@@ -459,6 +474,14 @@ C0支持最简单的while循环语句：
 <loop-statement> ::= 
     'while' '(' <condition> ')' <statement>
 ```
+
+`while`语句的流程是：
+
+1. 求值`<condition>`
+2. 如果`<condition>`是`false`，跳转到步骤5
+3. 控制进入`while`的代码块并顺序执行
+4. 控制达到`while`代码块的尾部时，跳转到步骤1
+5. 控制跳过`while`结构，执行之后的代码块
 
 ##### 3.2.2.11 输入输出语句
 
@@ -474,7 +497,8 @@ C0支持最简单的while循环语句：
 语义上，要求：
 
 - `scan`的`<identifer>`必须是非`const`的变量，必须是可修改的
-- `print`的`<expression>`类型不能是`void`，必须是可读的/可计算的值
+- `print`的`<expression>`求值后的类型不能是`void`
+- `print`的`<expression>`求值后的类型决定了`print`输出的类型
 - `print`最后会输出一个换行
 - 一个`print`有多个`<printable>`时，`<printable>`之间输出一个空格(`bipush 32` + `cprint`)
 
@@ -606,6 +630,22 @@ print("hello\x20world!");
 <for-update-expression> ::=
     (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
 ```
+
+`do-while`语句的流程是：
+
+1. 控制进入`do-while`的代码块并顺序执行
+2. 控制到达`do-while`代码块的尾部时，求值`<condition>`
+3. 如果`<condition>`是true，跳转到步骤1
+4. 控制离开`while`结构，执行之后的代码块
+
+`for`语句的流程是：
+
+1. 控制顺序进入执行`<for-init-statement>`
+2. 求值`<condition>`
+3. 如果`<condition>`是false，跳转到步骤1
+4. 控制进入`for`代码块并顺序执行
+5. 控制到达`for`代码块的尾部时，执行`<for-update-expression>`
+6. 跳转到步骤2
 
 语义规则：
 
