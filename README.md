@@ -708,7 +708,7 @@ do {
 
 语义规则：
 
-- `switch`的`<condition>`必须是整数类型的（`int`或`char`），不允许类型转换
+- `switch`的`<expression>`必须是整数类型的（`int`或`char`），不允许类型转换
 - 每一种标签（`default`、特定值的`case`）只能出现一次
 - `break;` 只能出现在 `switch` 的语句块中
 - `break`代表跳出`switch`语句块，控制转移到`switch`外的下一条语句
