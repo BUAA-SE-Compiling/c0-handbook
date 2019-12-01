@@ -700,7 +700,7 @@ do {
 
 <condition-statement> ::= 
      'if' '(' <condition> ')' <statement> ['else' <statement>]
-    |'switch' '(' <condition> ')' '{' {<labeled-statement>} '}'
+    |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
 <labeled-statement> ::= 
      'case' (<integer-literal>|<char-literal>) ':' <statement>
     |'default' ':' <statement>
@@ -1393,7 +1393,7 @@ mini 实验中采用的是语法分析制导翻译，因为遍历语法树执行
    
 <condition-statement> ::= 
      'if' '(' <condition> ')' <statement> ['else' <statement>]
-    |'switch' '(' <condition> ')' '{' {<labeled-statement>} '}'
+    |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
 
 <labeled-statement> ::= 
      'case' (<integer-literal>|<char-literal>) ':' <statement>

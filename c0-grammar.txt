@@ -113,7 +113,7 @@
    
 <condition-statement> ::= 
      'if' '(' <condition> ')' <statement> ['else' <statement>]
-    |'switch' '(' <condition> ')' '{' {<labeled-statement>} '}'
+    |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
 
 <labeled-statement> ::= 
      'case' (<integer-literal>|<char-literal>) ':' <statement>
