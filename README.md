@@ -199,7 +199,37 @@ C0的源代码只在ASCII范围内接受如下任意字符：
 
 保留字不能被词法分析器视为标识符。它们可能是当前语法的关键组成部分；也可能是为了以后的新语法预留的内容，因此暂时不会作为关键字出现在语法中。保留字区分大小写。
 
-##### 3.2.2.2 整数字面量
+##### 3.2.2.2 标识符
+
+基础C0的标识符文法为：
+
+```c++
+<nondigit> ::=    'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'
+<identifier> ::= 
+    <nondigit>{<nondigit>|<digit>}
+```
+
+**根据`<identifier>`的文法规则**可以看出：C0的标识符只支持数字和英文字母，且不能以数字开头。标识符区分大小写。
+
+##### 3.2.2.3 类型系统
+
+基础C0只支持两种基础类指示符和一个常类型修饰符：
+
+```c
+<type-specifier>         ::= <simple-type-specifier>
+<simple-type-specifier>  ::= 'void'|'int'
+<const-qualifier>        ::= 'const'
+```
+
+这些关键字主要被显式地使用于[变量声明]()、[函数定义]()和[类型转换]()。
+
+`void`是没有值语义的类型，不能参与变量声明（见[变量](#3227-变量)的语义规则）、不能参与求值（见[表达式](#3225-运算符与表达式)的语义规则）。
+
+`int`是32位的有符号整数，以二进制补码的形式存储。
+
+`const`通常与类型一起使用，语义是immutable，说明其修饰的类型**值不可被改变**。
+
+##### 3.2.2.4 整数字面量
 
 基础C0只支持两种类型的整数字面量：十进制整数字面量和十六进制整数字面量。
 
@@ -218,41 +248,11 @@ C0的源代码只在ASCII范围内接受如下任意字符：
     ('0x'|'0X')<hexadecimal-digit>{<hexadecimal-digit>}
 ```
 
-整数字面量不包含符号，但是其类型默认是32位的有符号整数，这一点在有其他数据类型的情况下是需要注意的一点，后文会提到。
+整数字面量不包含符号，但是其类型是有符号的`int`，这一点在有其他数据类型的情况下是需要注意的一点，后文会提到。
 
-> mini：**根据`<decimal-literal>`的文法规则**可以看出：非0的十进制整数字面量不能有任何前导0。而 mini 的中`<无符号整数>`的文法规则是允许的，这里的不同之处请留意。
+> 注意：**根据`<decimal-literal>`的文法规则**可以看出：非0的十进制整数字面量不能有任何前导0。而 mini 的中`<无符号整数>`的文法规则是允许的，这里的不同之处请留意。
 
 > UB: 虽然字面量有类型意味着其有着受限的值域，但是C0并不要求对溢出进行报错，使用过大的字面量是未定义行为。你可以报出编译错误，也可以截断高位让其自然溢出，甚至选择给出一个善意的warning之后当作无事发生。
-
-##### 3.2.2.3 标识符
-
-基础C0的标识符文法为：
-
-```c++
-<nondigit> ::=    'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'
-<identifier> ::= 
-    <nondigit>{<nondigit>|<digit>}
-```
-
-**根据`<identifier>`的文法规则**可以看出：C0的标识符只支持数字和英文字母，且不能以数字开头。标识符区分大小写。
-
-##### 3.2.2.4 类型系统
-
-基础C0只支持两种基础类指示符和一个常类型修饰符：
-
-```c
-<type-specifier>         ::= <simple-type-specifier>
-<simple-type-specifier>  ::= 'void'|'int'
-<const-qualifier>        ::= 'const'
-```
-
-类型主要被使用于变量声明、函数定义。
-
-`int`是32位的有符号整数，以二进制补码的形式存储。
-
-`void`是无值的类型，不能参与任何有关存储的声明、不能参与计算。
-
-`const`通常与类型一起使用，语义是immutable，说明其修饰的类型**值不可被改变**。
 
 ##### 3.2.2.5 运算符与表达式
 
@@ -271,14 +271,16 @@ C0的源代码只在ASCII范围内接受如下任意字符：
 ```c
 <assignment-expression> ::= 
     <identifier><assignment-operator><expression>
+    
 <condition> ::= 
-     <expression>[<relational-operator><expression>]
+    <expression>[<relational-operator><expression>]
+    
 <expression> ::= 
     <additive-expression>
 <additive-expression> ::= 
-     <multiplicative-expression>{<additive-operator><multiplicative-expression>}
+    <multiplicative-expression>{<additive-operator><multiplicative-expression>}
 <multiplicative-expression> ::= 
-     <unary-expression>{<multiplicative-operator><unary-expression>}
+    <unary-expression>{<multiplicative-operator><unary-expression>}
 <unary-expression> ::=
     [<unary-operator>]<primary-expression>
 <primary-expression> ::=  
@@ -296,21 +298,25 @@ C0的源代码只在ASCII范围内接受如下任意字符：
 - 关系运算符：`<`、`<=`、`>`、`>=`、`==`、`!=`，从左到右结合
 - 赋值运算符：`=`，从右到左结合
 
-关系运算符在关系表达式`<condition>`的规则中至多允许出现一次，因此其结合性可能用不到。
-
-赋值语句的右侧不接受关系表达式，因此赋值运算符和关系运算符的优先级关系也可能用不到。
+> 关系运算符在`<condition>`的规则中至多允许出现一次，因此其结合性可能用不到。赋值语句的右侧不接受关系表达式，因此赋值运算符和关系运算符的优先级关系也可能用不到。
 
 从语义上，要求：
 
-- 赋值语句左侧的标识符不能是不可修改的类型
-- 作为`<primary-expression>`参与计算的内容必须是可读的非`void`类型
-- `<condition>`的最终值类型是`int`
-- `<condition> ::= <expression>`时，如果`<expression>`可以转换为`int`类型，且转换得到的值为`0`，那么视为`false`；否则均视为`true`。
-- `<condition> ::= <expression><relational-operator><expression>`时，如果两侧的`<expression>`是可比的且满足对应运算符的语义，那么视为`true`；否则均视为`false`。
-  - 可比的是指两侧的类型可以通过较小的类型提升至较大的类型，且这个较大的类型的值可以互相比较。`int`、`char`、`double`都是可比的。
-  - 运算符语义：`<`左小于右、`<=`左不大于右、`>`左大于右、`>=`左不小于右、`==`左等于右、`!=`左不等于右
+- 表达式的值和类型取决于运算结果，且运算数都必须是有值的（不能是`void`类型、不能是函数名）：
+  - `<primary-expression>` 的类型和值，与其推导出的语法成分完全相同
+  - 对于单目的算术表达式（`<unary-expression>`），其类型和操作数（`<primary-expression>`）相同，值等同于对操作数进行算术取负的结果
+  - 对于双目的算术表达式（`<additive-expression>`、`<multiplicative-expression>`），值等同于对操作数进行对应算术运算的结果
+  - 顶级表达式`<expression>`的类型和值，与其推导出的`<additive-expression>`完全相同
+- `<condition>`只有`true`和`false`的逻辑语义，其运算数都必须是有值的（不能是`void`类型、不能是函数名）
+  - `<condition> ::= <expression>`时，如果`<expression>`是（或可以转换为）`int`类型，且转换得到的值为`0`，那么视为`false`；否则均视为`true`。
+  - `<condition> ::= <expression><relational-operator><expression>`时，根据对应关系运算符的语义，决定是`true`还是`false`
+- `<assignment-expression>`没有值语义
+- `<assignment-expression>`左侧的标识符的值类型必须是可修改的变量（不能是`const T`、不能是函数名）
+- `<assignment-expression>`右侧的表达式必须是有值的（不能是`void`类型、不能是函数名）
 
-> UB:  关系表达式`<condition>`在这里只说明了什么样的情况应该视为true或false，但是从未说明其本身的值应该是多少（即没有说必须是0和1）
+> 注意： 基础C0只有`int`这一种有值类型，因此不涉及类型转换的问题
+
+> UB:  关系表达式`<condition>`在这里没有规定实际类型，只说明了什么样的情况应该视为true或false，但是从未说明其本身的值应该是多少（即没有说必须是0或1）
 >
 > （因为它不出现在赋值语句右侧以及函数传参，因此这里不进行强制约束了）
 
@@ -545,7 +551,9 @@ int fun() {
 
 #### 3.2.3 扩展C0
 
-扩展 C0 是对C0语法的扩充，以一些可选的附加项出现在本实验中，附加项的加分取决于相对难度，在每个附加项的最后会给出难度系数。
+扩展 C0 是对C0语法的扩充，以一些可选的附加项出现在本实验中，本节后续内容给出这些附加项的解释。
+
+在每个附加项的最后会给出分值系数（如果有）。
 
 ##### 3.2.3.1 注释
 
@@ -563,9 +571,9 @@ int fun() {
 
 严格地讲，注释并不属于语法成份，不应该被词法分析输出。
 
-注释的分析不遵循最大吞噬规则：
+注释的分析**不遵循**最大吞噬规则：
 
-- 单行注释内容的分析遇到第一个0x0A或0x0D就立即结束
+- 单行注释内容的分析遇到第一个 0x0A 或 0x0D 字节就立即结束
 - 多行注释内容的分析遇到第一个`*/`序列就立即结束
 
 系数：1
@@ -601,7 +609,7 @@ print("hello\x20world!");
 
 系数：2
 
-##### 3.2.3.3 循环语句
+##### 3.2.3.3 循环语句与跳转语句
 
 ```c++
 <statement> ::= 
@@ -680,7 +688,7 @@ do {
 
 系数：3(do) / 5(for)
 
-##### 3.2.3.4 switch
+##### 3.2.3.4 switch 与 break
 
 ```c
 <statement> ::= 
@@ -747,19 +755,42 @@ do {
 
 系数： 3
 
-##### 3.2.2.6 char
+##### 3.2.2.6 类型转换
+
+类型转换是将一个**有值类型**的值转换为**某个**指定**有值类型**的值的操作，C0的有值基础类型都是可以互相转换的。
+
+类型转换分为显示类型转换和隐式类型转换。
+
+隐式类型转换主要发生在求值和赋值的场合：
+
+- 对于双目的算术表达式（`<additive-expression>`、`<multiplicative-expression>`），如果两操作数类型不同，应隐式地将较小的类型转换至较大的类型，最终得到的结果类型和类型较大的操作数一致，值等同于对操作数进行对应算术运算的结果
+- 对于双目的关系表达式（`<condition> ::= <expression><relational-operator><expression>`），如果两操作数类型不同，应隐式地将较小的类型转换至较大的类型，根据对应关系运算符的语义，决定是`true`还是`false`
+- 对于赋值表达式`<assignment-expression>`，如果两侧的类型不同，应该将右侧表达式隐式转换为左侧标识符的类型
+- 如果函数调用的传参数量和声明所需的数量一致，但是参数的类型不匹配，应当对传入参数进行隐式转换
+
+显式类型转换：
 
 ```c
-<type-specifier>         ::= <simple-type-specifier>
-<simple-type-specifier>  ::= 'void'|'int'|'char'
-<const-qualifier>        ::= 'const'
-
 <multiplicative-expression> ::= 
      <cast-expression>{<multiplicative-operator><cast-expression>}
 <cast-expression> ::=
     {'('<type-specifier>')'}<unary-expression>
 <unary-expression> ::=
     [<unary-operator>]<primary-expression>
+```
+
+根据类型转换的定义以及[表达式](3225-运算符与表达式)“任何运算数的类型不能是`void`”的语义要求：
+
+- 无论`<cast-expression>`的目标类型是什么，只要操作数`<unary-expression>`的类型是`void`，都**是**语义错误
+- 只要`<cast-expression>`的目标类型是`void`，无论操作数`<unary-expression>`的类型是什么，都**是**语义错误
+
+##### 3.2.2.7 char
+
+```c
+<type-specifier>         ::= <simple-type-specifier>
+<simple-type-specifier>  ::= 'void'|'int'|'char'
+<const-qualifier>        ::= 'const'
+
 <primary-expression> ::=  
      '('<expression>')' 
     |<identifier>
@@ -770,19 +801,15 @@ do {
 
 `char`是8位的无符号整数，以二进制原码的形式存储。
 
-选择了这条，你必须实现[字符字面量与字符串字面量](#3232-字符字面量与字符串字面量)。
-
 字符字面量的默认类型是`char`。
 
 `char`类型参与**任何运算**之前，都先被隐式地转换为`int`，运算结果的类型也是`int`。
 
-多字节的整数类型赋值给`char`前，先隐式地转换为`char`。
+> 注意： 为了实现 char，你**必须**先实现[类型转换](#3226-类型转换)和[字符字面量与字符串字面量](#3232-字符字面量与字符串字面量)。
 
-`double`赋值给`char`前，先隐式地转换为`int`。
+系数：9 (字面量+类型转换+char)
 
-系数：9(含字面量)
-
-##### 3.2.2.7 double
+##### 3.2.2.8 double
 
 ```c
 <sign> ::= 
@@ -818,13 +845,9 @@ do {
 
 浮点字面量的默认类型是`double`。
 
-`int`和`char`能够被`double`精确表示，它们与`double`运算之前，都应该被隐式地转换为`double`，且运算结果也是`double`。
+> 注意： 为了实现 double，你**必须**先实现[类型转换](#3226-类型转换)。
 
-`double`赋值给`int`前，先隐式地转换为`int`。
-
-`double`赋值给`char`前，先隐式地转换为`int`。
-
-系数：10(含字面量)
+系数：10 (字面量+类型转换+double)
 
 ### 3.3 实现指引
 
