@@ -1332,7 +1332,7 @@ mini 实验中采用的是语法分析制导翻译，因为遍历语法树执行
     |'print'  |'scan'
 
 
-<char-liter> ::= 
+<char-literal> ::= 
     "'" (<c-char>|<escape-seq>) "'" 
 <string-literal> ::= 
     '"' {<s-char>|<escape-seq>} '"'
