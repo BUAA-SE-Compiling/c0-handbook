@@ -505,7 +505,7 @@ C0支持最简单的while循环语句：
 - `scan`的`<identifer>`必须是非`const`的变量，必须是可修改的
 - `print`的`<expression>`求值后的类型不能是`void`
 - `print`的`<expression>`求值后的类型决定了`print`输出的类型
-- `print`最后会输出一个换行
+- `print`最后会输出一个换行（`printl`）
 - 一个`print`有多个`<printable>`时，`<printable>`之间输出一个空格(`bipush 32` + `cprint`)
 
 > UB: scan和print是目标机有关的内容，当I/O流出现问题时，它们的表现是未定义的
@@ -1231,7 +1231,6 @@ mini 实验中采用的是语法分析制导翻译，因为遍历语法树执行
 /* */ parseBinaryExpr() {
     parsePrimaryExpr();
     
-    OP op;
     auto opToken = nextToken();
     
     nextToken();
