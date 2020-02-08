@@ -28,7 +28,7 @@
     |'print'  |'scan'
 
 
-<char-liter> ::= 
+<char-literal> ::= 
     "'" (<c-char>|<escape-seq>) "'" 
 <string-literal> ::= 
     '"' {<s-char>|<escape-seq>} '"'
