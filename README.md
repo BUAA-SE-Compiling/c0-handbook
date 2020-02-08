@@ -581,7 +581,7 @@ int fun() {
 ##### 3.2.3.2 字符字面量与字符串字面量
 
 ```c
-<char-liter> ::= 
+<char-literal> ::= 
     "'" (<c-char>|<escape-seq>) "'" 
 <string-literal> ::= 
     '"' {<s-char>|<escape-seq>} '"'
@@ -650,10 +650,11 @@ print("hello\x20world!");
 
 1. 控制顺序进入执行`<for-init-statement>`
 2. 求值`<condition>`
-3. 如果`<condition>`是false，跳转到步骤1
+3. 如果`<condition>`是false，跳转到步骤7
 4. 控制进入`for`代码块并顺序执行
 5. 控制到达`for`代码块的尾部时，执行`<for-update-expression>`
 6. 跳转到步骤2
+7. 控制离开for结构，执行之后的代码块
 
 语义规则：
 
